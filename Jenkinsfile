@@ -100,7 +100,7 @@ pipeline{
             }
 
 
-             stage('docker image'){
+            stage('docker image'){
 
                 steps{
                    script{
@@ -113,7 +113,26 @@ pipeline{
 
                 }
 
-             }          
+             }    
+
+            stage('docker image push'){
+
+               steps{
+                 
+                 script{
+                  
+                  withCredentials([string(credentialsId: 'docker-login', variable: 'dockerhub-login')]) {
+                    sh 'docker login -u madhaviraj -p ${dockerhub-login}'
+
+                     }
+
+                 }
+
+               }
+
+
+            }
+
 
         }
         
