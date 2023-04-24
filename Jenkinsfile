@@ -1,6 +1,10 @@
 pipeline{
     
     agent any 
+
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('login-docker')
+    }
     
     stages {
         
@@ -122,7 +126,8 @@ pipeline{
                  script{
                   
                  withCredentials([string(credentialsId: 'docker-login', variable: 'dockerhub-login')]) {
-                   sh 'docker login -u madhaviraj -p ${dockerhub-login}'
+                   //sh 'docker login -u madhaviraj -p ${dockerhub-login}'
+                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
                     sh 'docker push madhaviraj/$JOB_NAME:v1.$BUILD_ID'
                     sh 'docker push madhaviraj/$JOB_NAME:latest'
                     
