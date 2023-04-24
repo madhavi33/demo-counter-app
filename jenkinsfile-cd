@@ -5,8 +5,9 @@ pipeline{
     parameters{
 
         choice(name: 'action', choices: 'create\ndestroy\ndestroyekscluster', description: 'create/update or destroy eks cluster')
-        string(name: 'cluster', defaultValue: 'demo-cluster', description: 'EKS cluster name')
-        string(name: 'Region', defaultValue: 'ap-south-1', description: 'EKS cluster region')
+        string(name: 'aws_account_id', description: "AWS ACCOUNT ID", defaultValue: '089826821991')
+        string(name: 'Region', description: "Region of ECR", defaultValue: 'ap-south-1')
+        string(name: 'cluster', description: "name of the EKS Cluster", defaultValue: 'demo-cluster1')
     }
 
     environment{
@@ -28,6 +29,23 @@ pipeline{
                 
            } 
 
+        }
+
+        stage('Create EKS Cluster : Terraform'){
+            when { expression {  params.action == 'create' } }
+            steps{
+                script{
+
+                    dir('eks_module') {
+                      sh """
+                          
+                          terraform init 
+                          terraform plan -var 'access_key=$ACCESS_KEY' -var 'secret_key=$SECRET_KEY' -var 'region=${params.Region}' --var-file=./config/terraform.tfvars
+                          terraform apply -var 'access_key=$ACCESS_KEY' -var 'secret_key=$SECRET_KEY' -var 'region=${params.Region}' --var-file=./config/terraform.tfvars --auto-approve
+                      """
+                  }
+                }
+            }
         }
 
 
