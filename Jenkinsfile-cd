@@ -94,29 +94,29 @@ pipeline{
             }
         }
 
-        // stage('delete deployments'){
+        stage('delete deployments'){
 
-        //     steps{
+            steps{
 
-        //         script{
+                script{
 
-        //             def destroy = false
+                    def destroy = false
 
-        //             try{
+                    try{
 
-        //                 input message: 'please confirm the destroy to delete deployment', ok: 'ready to destroy config'
-        //                 destroy= true
-        //             }
-        //             catch(err){
-        //                 destroy= false
-        //             }
-        //             if(destroy){
-        //                 sh """
-        //                    kubectl delete -f .
-        //                    """;
-        //             }   
-        //         }
-        //     }
-        // }
+                        input message: 'please confirm the destroy to delete deployment', ok: 'ready to destroy config'
+                        destroy= true
+                    }
+                    catch(err){
+                        destroy= false
+                    }
+                    if(destroy){
+                        sh """
+                           kubectl delete -f .
+                           """;
+                    }   
+                }
+            }
+        }
     }
 }
