@@ -122,7 +122,7 @@ pipeline{
                  script{
                   
                  withCredentials([usernameColonPassword(credentialsId: 'docker', variable: '')]) {
-                    sh 'docker login -u madhaviraj -p ${dockerhub-login}'
+                   // sh 'docker login -u madhaviraj -p ${dockerhub-login}'
                     sh 'docker image push madhaviraj/$JOB_NAME:v1.$BUILD_ID'
                     sh 'docker image push madhaviraj/$JOB_NAME:latest'
                     
