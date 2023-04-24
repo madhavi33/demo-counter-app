@@ -69,35 +69,35 @@ pipeline{
                 }
             }
         
-            stage('upload war file to nexus'){
+            // stage('upload war file to nexus'){
                 
-                steps{
+            //     steps{
                     
-                    script{
+            //         script{
                       
-                      def readPomVersion = readMavenPom file: 'pom.xml'
-                      nexusArtifactUploader artifacts:
-                         [
+            //           def readPomVersion = readMavenPom file: 'pom.xml'
+            //           nexusArtifactUploader artifacts:
+            //              [
                          
-                           [
-                              artifactId: 'springboot', 
-                              classifier: '', 
-                              file: 'target/Uber.jar', 
-                              type: 'jar'
-                           ]
-                       ], 
-                       credentialsId: 'nexus-auth', 
-                       groupId: 'com.example', 
-                       nexusUrl: '13.233.89.129:8081', 
-                       nexusVersion: 'nexus3', 
-                       protocol: 'http', 
-                       repository: 'demoapp-release', 
-                       version: "${readPomVersion.version}"
+            //                [
+            //                   artifactId: 'springboot', 
+            //                   classifier: '', 
+            //                   file: 'target/Uber.jar', 
+            //                   type: 'jar'
+            //                ]
+            //            ], 
+            //            credentialsId: 'nexus-auth', 
+            //            groupId: 'com.example', 
+            //            nexusUrl: '13.233.89.129:8081', 
+            //            nexusVersion: 'nexus3', 
+            //            protocol: 'http', 
+            //            repository: 'demoapp-release', 
+            //            version: "${readPomVersion.version}"
 
-                    }
+            //         }
 
-                }
-            }
+            //     }
+            // }
 
 
             stage('docker image'){
@@ -121,8 +121,8 @@ pipeline{
                  
                  script{
                   
-                 withCredentials([usernameColonPassword(credentialsId: 'docker', variable: '')]) {
-                   // sh 'docker login -u madhaviraj -p ${dockerhub-login}'
+                 withCredentials([string(credentialsId: 'docker', variable: 'dockerhub-login')]) {
+                   sh 'docker login -u madhaviraj -p ${dockerhub-login}'
                     sh 'docker push madhaviraj/$JOB_NAME:v1.$BUILD_ID'
                     sh 'docker push madhaviraj/$JOB_NAME:latest'
                     
