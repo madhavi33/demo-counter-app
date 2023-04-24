@@ -13,7 +13,7 @@ spec:
         app: myspringbootapp
     spec:
       containers:
-      - image: madhaviraj/democounterapp:latest
+      - image: madhaviraj/demoapp:latest
         name: myspringbootapp 
         imagePullPolicy: Always
         ports:
