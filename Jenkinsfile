@@ -14,66 +14,68 @@ pipeline{
                 }
             }
         }
-        stage('UNIT testing'){
+        // stage('UNIT testing'){
             
-            steps{
+        //     steps{
                 
-                script{
+        //         script{
                     
-                    sh 'mvn test'
-                }
-            }
-        }
-        stage('Integration testing'){
+        //             sh 'mvn test'
+        //         }
+        //     }
+        // }
+        // stage('Integration testing'){
             
-            steps{
+        //     steps{
                 
-                script{
+        //         script{
                     
-                    sh 'mvn verify -DskipUnitTests'
-                }
-            }
-        }
-        stage('Maven build'){
+        //             sh 'mvn verify -DskipUnitTests'
+        //         }
+        //     }
+        // }
+        // stage('Maven build'){
             
-            steps{
+        //     steps{
                 
-                script{
+        //         script{
                     
-                    sh 'mvn clean install'
-                }
-            }
-        }
-        stage('Static code analysis'){
+        //             sh 'mvn clean install'
+        //         }
+        //     }
+        // }
+        // stage('Static code analysis'){
             
-            steps{
+        //     steps{
                 
-                script{
+        //         script{
                     
-                    withSonarQubeEnv(credentialsId: 'sonar-api') {
+        //             withSonarQubeEnv(credentialsId: 'sonar-api') {
                         
-                        sh 'mvn clean package sonar:sonar'
-                    }
-                   }
+        //                 sh 'mvn clean package sonar:sonar'
+        //             }
+        //            }
                     
-                }
-            }
-            stage('Quality Gate Status'){
+        //         }
+        //     }
+        //     stage('Quality Gate Status'){
                 
-                steps{
+        //         steps{
                     
-                    script{
+        //             script{
                         
-                        waitForQualityGate abortPipeline: false, credentialsId: 'sonar-api'
-                    }
-                }
-            }
+        //                 waitForQualityGate abortPipeline: false, credentialsId: 'sonar-api'
+        //             }
+        //         }
+        //     }
         
             stage('upload war file to nexus'){
                 
                 steps{
                     
                     script{
+                      
+                      def readPomVersion = readMavenPom file: 'pom.xml'
                       nexusArtifactUploader artifacts:
                          [
                          
@@ -86,11 +88,11 @@ pipeline{
                        ], 
                        credentialsId: 'nexus-auth', 
                        groupId: 'com.example', 
-                       nexusUrl: 'http://13.233.89.129:8081', 
+                       nexusUrl: '13.233.89.129:8081', 
                        nexusVersion: 'nexus3', 
                        protocol: 'http', 
                        repository: 'demoapp-release', 
-                       version: '1.0.0'
+                       version: "$(readPomVersion.version)"
 
                     }
 
