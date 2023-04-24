@@ -100,7 +100,7 @@ pipeline{
             }
 
 
-             stage{
+             stage('docker image'){
 
                 steps{
                    script{
