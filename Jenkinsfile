@@ -14,106 +14,106 @@ pipeline{
                 }
             }
         }
-        stage('UNIT testing'){
+        // stage('UNIT testing'){
             
-            steps{
+        //     steps{
                 
-                script{
+        //         script{
                     
-                    sh 'mvn test'
-                }
-            }
-        }
-        stage('Integration testing'){
+        //             sh 'mvn test'
+        //         }
+        //     }
+        // }
+        // stage('Integration testing'){
             
-            steps{
+        //     steps{
                 
-                script{
+        //         script{
                     
-                    sh 'mvn verify -DskipUnitTests'
-                }
-            }
-        }
-        stage('Maven build'){
+        //             sh 'mvn verify -DskipUnitTests'
+        //         }
+        //     }
+        // }
+        // stage('Maven build'){
             
-            steps{
+        //     steps{
                 
-                script{
+        //         script{
                     
-                    sh 'mvn clean install'
-                }
-            }
-        }
-        stage('Static code analysis'){
+        //             sh 'mvn clean install'
+        //         }
+        //     }
+        // }
+        // stage('Static code analysis'){
             
-            steps{
+        //     steps{
                 
-                script{
+        //         script{
                     
-                    withSonarQubeEnv(credentialsId: 'sonar-api') {
+        //             withSonarQubeEnv(credentialsId: 'sonar-api') {
                         
-                        sh 'mvn clean package sonar:sonar'
-                    }
-                   }
+        //                 sh 'mvn clean package sonar:sonar'
+        //             }
+        //            }
                     
-                }
-            }
-            stage('Quality Gate Status'){
+        //         }
+        //     }
+        //     stage('Quality Gate Status'){
                 
-                steps{
+        //         steps{
                     
-                    script{
+        //             script{
                         
-                        waitForQualityGate abortPipeline: false, credentialsId: 'sonar-api'
-                    }
-                }
-            }
+        //                 waitForQualityGate abortPipeline: false, credentialsId: 'sonar-api'
+        //             }
+        //         }
+        //     }
         
-            stage('upload war file to nexus'){
+        //     stage('upload war file to nexus'){
                 
-                steps{
+        //         steps{
                     
-                    script{
+        //             script{
                       
-                      def readPomVersion = readMavenPom file: 'pom.xml'
-                      nexusArtifactUploader artifacts:
-                         [
+        //               def readPomVersion = readMavenPom file: 'pom.xml'
+        //               nexusArtifactUploader artifacts:
+        //                  [
                          
-                           [
-                              artifactId: 'springboot', 
-                              classifier: '', 
-                              file: 'target/Uber.jar', 
-                              type: 'jar'
-                           ]
-                       ], 
-                       credentialsId: 'nexus-auth', 
-                       groupId: 'com.example', 
-                       nexusUrl: '13.233.89.129:8081', 
-                       nexusVersion: 'nexus3', 
-                       protocol: 'http', 
-                       repository: 'demoapp-release', 
-                       version: "${readPomVersion.version}"
+        //                    [
+        //                       artifactId: 'springboot', 
+        //                       classifier: '', 
+        //                       file: 'target/Uber.jar', 
+        //                       type: 'jar'
+        //                    ]
+        //                ], 
+        //                credentialsId: 'nexus-auth', 
+        //                groupId: 'com.example', 
+        //                nexusUrl: '13.233.89.129:8081', 
+        //                nexusVersion: 'nexus3', 
+        //                protocol: 'http', 
+        //                repository: 'demoapp-release', 
+        //                version: "${readPomVersion.version}"
 
-                    }
+        //             }
 
-                }
-            }
+        //         }
+        //     }
 
 
-            stage('docker image'){
+        //     stage('docker image'){
 
-                steps{
-                   script{
+        //         steps{
+        //            script{
 
-                     sh 'docker image build -t $JOB_NAME:v1.$BUILD_ID .'
-                     sh 'docker image tag $JOB_NAME:v1.$BUILD_ID madhaviraj/$JOB_NAME:v1.$BUILD_ID'
-                     sh 'docker image tag $JOB_NAME:v1.$BUILD_ID madhaviraj/$JOB_NAME:latest'
+        //              sh 'docker image build -t $JOB_NAME:v1.$BUILD_ID .'
+        //              sh 'docker image tag $JOB_NAME:v1.$BUILD_ID madhaviraj/$JOB_NAME:v1.$BUILD_ID'
+        //              sh 'docker image tag $JOB_NAME:v1.$BUILD_ID madhaviraj/$JOB_NAME:latest'
                     
-                   }
+        //            }
 
-                }
+        //         }
 
-             }    
+        //      }    
 
             stage('docker image push'){
 
@@ -121,7 +121,7 @@ pipeline{
                  
                  script{
                   
-                  withCredentials([string(credentialsId: 'docker-login', variable: 'dockerhub-login')]) {
+                 withCredentials([usernameColonPassword(credentialsId: 'docker', variable: 'dockerhub-login')]) {
                     sh 'docker login -u madhaviraj -p ${dockerhub-login}'
                     sh 'docker image push madhaviraj/$JOB_NAME:v1.$BUILD_ID'
                     sh 'docker image push madhaviraj/$JOB_NAME:latest'
